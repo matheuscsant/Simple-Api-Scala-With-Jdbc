@@ -9,15 +9,19 @@ lazy val root = (project in file("."))
 
 resolvers += "Akka library repository".at("https://repo.akka.io/maven")
 
-val AkkaVersion = "2.9.3"
-val AkkaHttpVersion = "10.6.3"
-val PostgreSqlJdbc = "42.7.3"
 
-libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-  "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
-  "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
-  "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
-)
-// https://mvnrepository.com/artifact/org.postgresql/postgresql
-libraryDependencies += "org.postgresql" % "postgresql" % "42.7.3"
+libraryDependencies ++= {
+  val AkkaVersion = "2.9.3"
+  val AkkaHttpVersion = "10.6.3"
+  val PostgreSqlJdbc = "42.7.3"
+  val AkkaHttpCors = "1.2.0"
+
+  Seq(
+    "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+    "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+    "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
+    "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
+    "org.postgresql" % "postgresql" % PostgreSqlJdbc,
+    "ch.megard" %% "akka-http-cors" % AkkaHttpCors excludeAll ExclusionRule(organization = "com.typesafe.akka")
+  )
+}
