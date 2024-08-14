@@ -1,5 +1,7 @@
 package dao
 
+import resource.exception.ResourceNotFound
+
 import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
 import scala.collection.immutable.Nil.:::
 
@@ -7,7 +9,7 @@ final case class Product(id: Long, name: String)
 
 final case class ProductsList(productsList: List[Product])
 
-class ProductDao() {
+object ProductDao {
 
   def getProductById(id: Long): Product = {
     val connection: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/challenge_scala", "postgres", "123456789")
@@ -17,9 +19,11 @@ class ProductDao() {
       resultSet = connection.createStatement().executeQuery(s"""SELECT id, name FROM \"Product\" WHERE id = ${id} LIMIT 1""")
       if (resultSet.next()) {
         produto = Product(resultSet.getLong("id"), resultSet.getString("name"))
+      } else {
+        throw ResourceNotFound("Produto não encontrado")
       }
     } catch {
-      case e: Exception => println("Falha ao recuperar dados")
+      case e: Exception => throw e
     } finally {
       resultSet.close()
       connection.close()
