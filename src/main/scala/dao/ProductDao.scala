@@ -72,7 +72,7 @@ class ProductDao() {
     try {
       preparedStatement = connection.prepareStatement(s"""INSERT INTO "Product" (name) VALUES (?)""")
       preparedStatement.setString(1, product.name)
-      preparedStatement.executeUpdate()
+      preparedStatement.execute()
       true
     } catch {
       case e: Exception =>
