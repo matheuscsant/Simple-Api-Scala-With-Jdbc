@@ -41,8 +41,10 @@ object ProductDao {
       while (resultSet.next()) {
         produtos = produtos ::: Product(resultSet.getLong("id"), resultSet.getString("name")) :: Nil
       }
+      if produtos.isEmpty then
+        throw ResourceNotFound("Nenhum produto encontrado")
     } catch {
-      case e: Exception => println("Falha ao recuperar dados")
+      case e: Exception => throw e
     } finally {
       resultSet.close()
       connection.close()
