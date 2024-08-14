@@ -11,8 +11,15 @@ final case class ProductsList(productsList: List[Product])
 
 object ProductDao {
 
+  private val url: String = "jdbc:postgresql://localhost:5432/challenge_scala"
+  private val user: String = "postgres"
+  private val password: String = "123456789"
+
+  // https://www.oreilly.com/library/view/scala-cookbook/9781449340292/ch16s02.html
   def getProductById(id: Long): Product = {
-    val connection: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/challenge_scala", "postgres", "123456789")
+    // https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
+    // Class.forName("org.postgresql.Driver") - Driver JDBC >= JDBC 4.0, don't need
+    val connection: Connection = DriverManager.getConnection(url, user, password)
     var resultSet: ResultSet = null
     var produto: Product = null
     try {
@@ -32,7 +39,7 @@ object ProductDao {
   }
 
   def getProducts: ProductsList = {
-    val connection: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/challenge_scala", "postgres", "123456789")
+    val connection: Connection = DriverManager.getConnection(url, user, password)
     var resultSet: ResultSet = null
     var produtos: List[Product] = List()
     try {
@@ -53,7 +60,7 @@ object ProductDao {
   }
 
   def updateProduct(id: Long, product: Product): Boolean = {
-    val connection: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/challenge_scala", "postgres", "123456789")
+    val connection: Connection = DriverManager.getConnection(url, user, password)
     var preparedStatement: PreparedStatement = null
     try {
       preparedStatement = connection.prepareStatement(s"""UPDATE "Product" SET name = ? WHERE id = ?""")
@@ -73,7 +80,7 @@ object ProductDao {
   }
 
   def insertProduct(product: Product): Boolean = {
-    val connection: Connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/challenge_scala", "postgres", "123456789")
+    val connection: Connection = DriverManager.getConnection(url, user, password)
     var preparedStatement: PreparedStatement = null
     try {
       preparedStatement = connection.prepareStatement(s"""INSERT INTO "Product" (name) VALUES (?)""")
