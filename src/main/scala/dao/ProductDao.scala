@@ -2,7 +2,7 @@ package dao
 
 import resource.exception.ResourceNotFound
 
-import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
+import java.sql.*
 import scala.collection.immutable.Nil.:::
 
 final case class Product(id: Long, name: String)
@@ -57,17 +57,17 @@ object ProductDao {
       preparedStatement = connection.prepareStatement(s"""UPDATE "Product" SET name = ? WHERE id = ?""")
       preparedStatement.setString(1, product.name)
       preparedStatement.setLong(2, id)
-      preparedStatement.executeUpdate()
+      val rows: Integer = preparedStatement.executeUpdate()
+
+      if rows == 0 then
+        throw new SQLException("Nenhum registro afetado")
       true
     } catch {
-      case e: Exception =>
-        println("Falha ao atualizar dados")
-        false
+      case e: Exception => throw e
     } finally {
       preparedStatement.close()
       connection.close()
     }
-
   }
 
   def insertProduct(product: Product): Boolean = {
@@ -76,12 +76,12 @@ object ProductDao {
     try {
       preparedStatement = connection.prepareStatement(s"""INSERT INTO "Product" (name) VALUES (?)""")
       preparedStatement.setString(1, product.name)
-      preparedStatement.execute()
+      val rows: Integer = preparedStatement.executeUpdate()
+      if rows == 0 then
+        throw new SQLException("Nenhum registro afetado")
       true
     } catch {
-      case e: Exception =>
-        println("Falha ao inserir dados")
-        false
+      case e: Exception => throw e
     } finally {
       preparedStatement.close()
       connection.close()

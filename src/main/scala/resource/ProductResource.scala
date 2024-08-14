@@ -26,8 +26,8 @@ object ProductResource {
         entity(as[Product]) {
           product =>
             complete {
-              val res: Boolean = dao.updateProduct(id, product)
-              HttpResponse(StatusCodes.Accepted)
+              dao.updateProduct(id, product)
+              HttpResponse(StatusCodes.OK)
             }
         }
       }
@@ -43,10 +43,10 @@ object ProductResource {
         post {
           entity(as[Product]) {
             product =>
-              val res: Boolean = dao.insertProduct(product)
+              dao.insertProduct(product)
               // https://doc.akka.io/docs/akka-http/current/common/http-model.html
-              val headers = Location("http://localhost:8080/product/teste")
-              if (res) complete(HttpResponse(StatusCodes.Created, headers = List(headers))) else complete(StatusCodes.BadRequest)
+              val headers = Location("http://localhost:8080/product/")
+              complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
           }
         }
       } ~
