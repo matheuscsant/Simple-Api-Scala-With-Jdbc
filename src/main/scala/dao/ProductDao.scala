@@ -79,6 +79,25 @@ object ProductDao {
     }
   }
 
+  def deleteProduct(id: Long): Boolean = {
+    val connection: Connection = DriverManager.getConnection(url, user, password)
+    var preparedStatement: PreparedStatement = null
+    try {
+      preparedStatement = connection.prepareStatement(s"""DELETE FROM "Product" WHERE id = ?""")
+      preparedStatement.setLong(1, id)
+      val rows: Integer = preparedStatement.executeUpdate()
+
+      if rows == 0 then
+        throw new SQLException("Nenhum registro afetado")
+      true
+    } catch {
+      case e: Exception => throw e
+    } finally {
+      preparedStatement.close()
+      connection.close()
+    }
+  }
+
   def insertProduct(product: Product): Boolean = {
     val connection: Connection = DriverManager.getConnection(url, user, password)
     var preparedStatement: PreparedStatement = null

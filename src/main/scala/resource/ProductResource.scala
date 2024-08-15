@@ -39,14 +39,24 @@ object ProductResource {
         }
       }
       ~
+      path("product" / LongNumber) { id =>
+        delete {
+          dao.deleteProduct(id)
+          complete(HttpResponse(StatusCodes.NoContent))
+        }
+      }
+      ~
       path("product") {
         post {
-          entity(as[Product]) {
-            product =>
-              dao.insertProduct(product)
-              // https://doc.akka.io/docs/akka-http/current/common/http-model.html
-              val headers = Location("http://localhost:8080/product/")
-              complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
+          extractUri {
+            uri =>
+              entity(as[Product]) {
+                product =>
+                  dao.insertProduct(product)
+                  // https://doc.akka.io/docs/akka-http/current/common/http-model.html
+                  val headers = Location(s"${uri.toString}/1")
+                  complete(HttpResponse(StatusCodes.Created, headers = List(headers)))
+              }
           }
         }
       } ~
